@@ -22,7 +22,7 @@ def index (request):
         # if page is empty then return last page
         page_obj = p.page(p.num_pages)
 
-
+ 
     username=None
     if request.session.has_key('logged_in'):
            logged_in = request.session.get('logged_in')
