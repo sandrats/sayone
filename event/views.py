@@ -5,9 +5,19 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 
 
+
 # Create your views here.
 def index (request):
-    events = Event.objects.all().order_by('startDate')
+    events = Event.objects.filter(startDate__gte=datetime.datetime.now())
+    if 'start-date' in request.GET and 'end-date' in request.GET:
+      start_date = datetime.datetime.strptime(request.GET['start-date'],'%Y-%m-%d')
+      end_date = datetime.datetime.strptime(request.GET['end-date'],'%Y-%m-%d')
+      events = events.filter(startDate__gte=start_date,endDate__lte=end_date)
+    if 'category' in request.GET:
+      events = events.filter(categories__id=request.GET['category'])
+    if 'search' in request.GET:
+      events = events.filter(title__contains=request.GET['search'])
+    events = events.order_by('startDate')
     categories = Category.objects.all()
 
     p = Paginator(events, 10)  # creating a paginator object
